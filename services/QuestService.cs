@@ -15,7 +15,7 @@ public class QuestService
 
     public static Quest BookQuest(int questId, int people_count, TimeOnly time, Boolean haveGiveCard)
     {
-        var availabilities = db.Availability.Where(a => a.quest_id == 1).ToList();
+        var availabilities = db.Availability.Where(a => a.quest_id == questId).ToList();
         var outOfTimeRangeExist = availabilities.Any(a => a.start_time > time || a.end_time < time);
         var quest = db.Quest.Where(q => q.id == questId).ToList()[0];
 
@@ -29,9 +29,9 @@ public class QuestService
             }
 
             throw new Exception($"Time is invalid. Available timer is {availableTime}");
-        } else if (quest.partisipants_limit <= people_count)
+        } else if (quest.partisipants_limit < people_count)
         {
-            throw new Exception($"People count is supported. Quest supports limit of {people_count}.");
+            throw new Exception($"People count is not supported. Quest supports limit of {quest.partisipants_limit}.");
         }
         else if (haveGiveCard)
         {
